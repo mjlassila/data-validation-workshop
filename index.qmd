@@ -7,6 +7,7 @@ editor: source
 ```{r}
 #| label: setup
 library(validate)
+library(dplyr)
 data(SBS2000)
 ```
 
@@ -70,7 +71,7 @@ df <- as.data.frame(result)
 ```
 
 ```{r}
-knitr::kable(df)
+knitr::kable(df %>% slice_sample(n=20))
 ```
 
 ## Automating data quality measurement with lumberjack
