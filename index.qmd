@@ -296,8 +296,43 @@ con <- DBI::dbConnect(SQLite(), "code/SBS2000.db")
 enterprise <- validatedb::tbl(con, "enterprise")
 print(enterprise)
 ```
+Use confront to execute the rules on the database table and print and do a summary. Because of error in dplyr::union_all() this exercise cannot be done.
 
 
 ## Automating data quality measurement with lumberjack
+
+```{r}
+library(lumberjack)
+```
+
+
+Use the lbj_rules() logger to track changes in rule violations for the clean_supermarkets.R script. Use the rules in code/SBS2000_rules.R.
+
+### Assignment 1
+
+Open the file 'code/clean_supermarkets.R' and study it's contents. Can you (sort-of) understand what the script is meant for?
+
+The file is for cleaning the supermarkets data.
+
+```{r}
+source("code/clean_supermarkets.R",chdir=TRUE)
+```
+
+Running the script created the clean dataset.
+
+```{r}
+inp <- read.csv("code/supermarkets.csv")
+out <- read.csv("code/clean_supermarkets.csv")
+```
+
+
+```{r}
+diff <- validate::cells(step1=inp, step2=out)
+diff
+```
+```{r}
+barplot(diff)
+```
+We can see from the picture which approaches were used in the cleaning.
 
 ## Managing data validation rules
