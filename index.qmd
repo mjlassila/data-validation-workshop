@@ -232,6 +232,7 @@ In production use, it is good to save validation rules apart from the data handl
 Let's create an external validation rule file, `rules.R` with the following content
 
 ```{r}
+#| eval: false
 turnover >= 0
 staff >= 0
 # profits can be negative (not for long...)
@@ -271,6 +272,31 @@ Read the br.yml file into a validator object.
 rules <- validator(.file="br.yml")
 print(as.data.frame(rules))
 ```
+
+### Exercise 4
+
+Install `validatedb` package.
+
+```{r}
+#| eval: false
+#| echo: true
+#library(remotes)
+#remotes::install_github("data-cleaning/validatedb")
+```
+
+
+```{r}
+library(validatedb)
+library(DBI)
+library(RSQLite)
+# we are using a sqlite database in this demo library(RSQLite)
+# connnect with the database file
+con <- DBI::dbConnect(SQLite(), "code/SBS2000.db")
+# retrieve a handle to the table "enterprise" in this database file.
+enterprise <- validatedb::tbl(con, "enterprise")
+print(enterprise)
+```
+
 
 ## Automating data quality measurement with lumberjack
 
