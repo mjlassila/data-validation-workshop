@@ -167,6 +167,7 @@ out <- confront(SBS2000, rules)
 summary(out)
 
 ```
+
 All tests pass
 
 ### Exercise 2
@@ -182,9 +183,6 @@ out <- confront(SBS2000, rules)
 summary(out)
 ```
 
-
-
-
 Create a rules set where you test whether the combination id and turnover is complete.
 
 ```{r}
@@ -196,9 +194,83 @@ out <- confront(SBS2000, rules)
 summary(out)
 ```
 
+Check if profit is total revue minus total costs.
 
-• confront the data with these rules.
+```{r}
+rules <- validator(
+  profit == total.rev - total.costs
+)
 
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+If total revenue turnover plus other revenue
+
+```{r}
+rules <- validator(
+  total.rev == turnover + other.rev
+)
+
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+Is profit is at most 60% of total revenue.
+
+```{r}
+rules <- validator(
+ profit <= 0.6 * total.rev 
+)
+
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+In production use, it is good to save validation rules apart from the data handling, eg. R analysis code.
+
+Let's create an external validation rule file, `rules.R` with the following content
+
+```{r}
+turnover >= 0
+staff >= 0
+# profits can be negative (not for long...)
+profit == total.rev - total.costs
+```
+
+```{r}
+rules <- validator(.file="rules.R")
+as.data.frame(rules)
+```
+
+Use names(rules) to set the id of the rules to BR01, BR02 and BR03.
+
+```{r}
+names(rules) <- c("BR01","BR02","BR03")
+print(rules)
+```
+
+Use the label function to set the label of the third rule to “profit def”. Use print(rules) to see the differences.
+
+```{r}
+label(rules)[3] <- "profit def"
+print(rules)
+```
+
+Export the rule set to `br.yml` in yaml format using export_yaml.
+
+```{r}
+validate::export_yaml(rules,"br.yml")
+```
+
+Open `br.yml` in RStudio (or another text editor) and copy the comments of the rules in into the descriptions of the yaml file.
+
+Read the br.yml file into a validator object.
+
+```{r}
+rules <- validator(.file="br.yml")
+print(as.data.frame(rules))
+```
 
 ## Automating data quality measurement with lumberjack
 

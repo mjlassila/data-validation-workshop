@@ -1,0 +1,29 @@
+rules:
+- expr: turnover >= 0
+  name: BR01
+  label: ''
+  description: ''
+  created: 2024-04-11 13:48:36.791018
+  origin: rules.R
+  meta:
+    language: validate 1.1.5
+    severity: error
+- expr: staff >= 0
+  name: BR02
+  label: ''
+  description: ''
+  created: 2024-04-11 13:48:36.791018
+  origin: rules.R
+  meta:
+    language: validate 1.1.5
+    severity: error
+- expr: profit == total.rev - total.costs
+  name: BR03
+  label: profit def
+  description: 'profits can be negative (not for long...)'
+  created: 2024-04-11 13:48:36.791018
+  origin: rules.R
+  meta:
+    language: validate 1.1.5
+    severity: error
+
