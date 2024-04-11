@@ -11,7 +11,7 @@ library(dplyr)
 data(SBS2000)
 ```
 
-Walktrough of userR2021 data validation workshop exercises. 
+Walktrough of userR2021 data validation workshop exercises.
 
 # Part 1 Writing rules inline
 
@@ -20,12 +20,10 @@ Walktrough of userR2021 data validation workshop exercises.
 ```{r}
 head(SBS2000)
 ```
+
 ```{r}
 summary(SBS2000)
 ```
-
-
-
 
 ## Assignment 2: Check basic validation rules
 
@@ -42,6 +40,7 @@ rules <- validator(
 ```{r}
 rules
 ```
+
 So, we have created five rules, V1-V5.
 
 Confront data with the rules
@@ -53,16 +52,19 @@ result <- confront(SBS2000, rules, key="id")
 ```{r}
 result
 ```
+
 Summarize the result and study the output
 
 ```{r}
 summary(result)
 ```
+
 ```{r}
 #| label: plot-the-result
 
 plot(result)
 ```
+
 Rules V3 and V4 fail in five cases total, so there are cases where revenue is negative.
 
 Let's turn the results to a data frame
@@ -83,33 +85,121 @@ x
 
 Function returns all cases in data which failed in validation.
 
-# Part 2: Reading rules from the file
+# Reading rules from the file
 
 Load sample rules from workshop materials.
+
 ```{r}
 file_rules <- validator(.file = "code/SBS2000_rules.R")
 ```
+
 ```{r}
 file_rules
 ```
-
 
 Now we have added new roles to the ruleset so let's check our data using them.
 
 ```{r}
 result <- confront(SBS2000, file_rules, key="id")
 ```
+
 ```{r}
 summary(result)
 ```
+
 ```{r}
 plot(result)
 ```
 
+# Part 2: Variable checks
+
+## Assignment 3: Data checking
+
+This is the rule we are given in the assignment brief.
+
+```{r}
+rules <- validator(
+  is.numeric(turnover)
+)
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+We must modify it to check if the size is text variable and and staff is interger.
+
+```{r}
+rules <- validator(
+  is.character(size),
+  is.integer(staff)
+)
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+Validation rule V1 fails because in the data, variable size is numeric.
+
+Create a rules object using is.na() to check missing items in turnover and profit. confront the rules with SBS2000 and summarize the results.
+
+```{r}
+rules <- validator(
+  !is.na(turnover),
+  !is.na(profit)
+)
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+There are 4 cases where turnover is missing and 5 cases in profit.
+
+Create a rules object using field_length (or nchar) to check that
+
+-   size has at least 2 characters.
+-   codes have exactly 5 characters.
+-   size has at least 2 and at most 3 characters.
+
+```{r}
+rules <- validator(
+  field_length(size,min = 2, max=Inf),
+  field_length(id, n = 5),
+  field_length(size, min = 2, max = 3)
+)
+out <- confront(SBS2000, rules)
+summary(out)
+
+```
+All tests pass
+
+### Exercise 2
+
+Create a rule set where you test whether id is complete.
+
+```{r}
+rules <- validator(
+  is_complete(id)
+)
+
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+
+
+
+Create a rules set where you test whether the combination id and turnover is complete.
+
+```{r}
+rules <- validator(
+  is_complete(id,turnover)
+)
+
+out <- confront(SBS2000, rules)
+summary(out)
+```
+
+
+• confront the data with these rules.
 
 
 ## Automating data quality measurement with lumberjack
-
-
 
 ## Managing data validation rules
