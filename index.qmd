@@ -13,8 +13,9 @@ data(SBS2000)
 
 Walktrough of userR2021 data validation workshop exercises. 
 
+# Part 1 Writing rules inline
 
-## ASSIGNMENT 1. study the SBS2000 data set
+## Assignment 1. Study the SBS2000 data set
 
 ```{r}
 head(SBS2000)
@@ -26,7 +27,7 @@ summary(SBS2000)
 
 
 
-## ASSIGNMENT 2: Check basic validation rules
+## Assignment 2: Check basic validation rules
 
 ```{r}
 rules <- validator(
@@ -73,6 +74,39 @@ df <- as.data.frame(result)
 ```{r}
 knitr::kable(df %>% slice_sample(n=20))
 ```
+
+```{r}
+# what does this function return?
+x <- violating(SBS2000, result)
+x
+```
+
+Function returns all cases in data which failed in validation.
+
+# Part 2: Reading rules from the file
+
+Load sample rules from workshop materials.
+```{r}
+file_rules <- validator(.file = "code/SBS2000_rules.R")
+```
+```{r}
+file_rules
+```
+
+
+Now we have added new roles to the ruleset so let's check our data using them.
+
+```{r}
+result <- confront(SBS2000, file_rules, key="id")
+```
+```{r}
+summary(result)
+```
+```{r}
+plot(result)
+```
+
+
 
 ## Automating data quality measurement with lumberjack
 
