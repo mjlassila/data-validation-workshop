@@ -1,0 +1,80 @@
+---
+title: "Systematic data validation with the validate package"
+format: html
+editor: source
+---
+
+```{r}
+#| label: setup
+library(validate)
+data(SBS2000)
+```
+
+Walktrough of userR2021 data validation workshop exercises. 
+
+
+## ASSIGNMENT 1. study the SBS2000 data set
+
+```{r}
+head(SBS2000)
+```
+```{r}
+summary(SBS2000)
+```
+
+
+
+
+## ASSIGNMENT 2: Check basic validation rules
+
+```{r}
+rules <- validator(
+  staff >= 0,
+  turnover >= 0,
+  other.rev >= 0,
+  turnover + other.rev == total.rev,
+  if (staff > 0) staff.costs >=0
+)
+```
+
+```{r}
+rules
+```
+So, we have created five rules, V1-V5.
+
+Confront data with the rules
+
+```{r}
+result <- confront(SBS2000, rules, key="id")
+```
+
+```{r}
+result
+```
+Summarize the result and study the output
+
+```{r}
+summary(result)
+```
+```{r}
+#| label: plot-the-result
+
+plot(result)
+```
+Rules V3 and V4 fail in five cases total, so there are cases where revenue is negative.
+
+Let's turn the results to a data frame
+
+```{r}
+df <- as.data.frame(result)
+```
+
+```{r}
+knitr::kable(df)
+```
+
+## Automating data quality measurement with lumberjack
+
+
+
+## Managing data validation rules
