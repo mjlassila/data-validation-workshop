@@ -284,7 +284,6 @@ Install `validatedb` package.
 #remotes::install_github("data-cleaning/validatedb")
 ```
 
-
 ```{r}
 library(validatedb)
 library(DBI)
@@ -296,15 +295,14 @@ con <- DBI::dbConnect(SQLite(), "code/SBS2000.db")
 enterprise <- validatedb::tbl(con, "enterprise")
 print(enterprise)
 ```
-Use confront to execute the rules on the database table and print and do a summary. Because of error in dplyr::union_all() this exercise cannot be done.
 
+Use confront to execute the rules on the database table and print and do a summary. Because of error in dplyr::union_all() this exercise cannot be done.
 
 ## Automating data quality measurement with lumberjack
 
 ```{r}
 library(lumberjack)
 ```
-
 
 Use the lbj_rules() logger to track changes in rule violations for the clean_supermarkets.R script. Use the rules in code/SBS2000_rules.R.
 
@@ -323,16 +321,60 @@ Running the script created the clean dataset.
 ```{r}
 inp <- read.csv("code/supermarkets.csv")
 out <- read.csv("code/clean_supermarkets.csv")
+st1 <- read.csv("code/step01.csv")
 ```
-
 
 ```{r}
-diff <- validate::cells(step1=inp, step2=out)
+diff <- cells(input=inp, step01 = st1,output = out)
 diff
 ```
+
 ```{r}
 barplot(diff)
 ```
+
 We can see from the picture which approaches were used in the cleaning.
+
+## Assigment 5
+
+Inspecting how rule-satisfaction evolves.
+
+```{r}
+rules <- validator(.file="code/SBS2000_rules.R")
+```
+
+```{r}
+cmp <- compare(rules, input=inp, step01=st1, output=out)
+cmp
+```
+
+```{r}
+plot(cmp)
+```
+
+## Assignment 6
+
+Automating measurement with `lumberjack`.
+
+* Uncomment the code under ASSIGNMENT 6, in clean_supermarkets.R
+
+# 2. Run the file with lumberjack::run_file()
+```{r}
+library(lumberjack)
+lumberjack:: run_file("code/clean_supermarkets.R")
+```
+
+```{r}
+# read the logfiles
+log_cellwise <- read.csv("code/dat_cellwise.csv")
+log_rule <- read.csv("code/dat_lbj_rules.csv")
+```
+
+```{r}
+dat_expression <- read.csv("code/dat_expression.csv")
+
+```
+
+
 
 ## Managing data validation rules
